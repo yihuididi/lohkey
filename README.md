@@ -21,7 +21,7 @@ ________________________________________________________________________________
    	The two files "lohkey/lohkey/users/urls.py" and "lohkey/lohkey/users/views.py" are both used as routers
 
 
-3. Templates
+2. Templates
    
 	**• Files Handling Templates:**
 The templates (HTML files) are stored in the templates directory of each app. (e.g. lohkey/users/templates/home.html: This is the HTML file rendered by the home view.)
@@ -36,6 +36,7 @@ cd lohkey/lohkey
 python3 manage.py runserver
 ```
 Open your browser and go to http://127.0.0.1:8000.
+
 
 **2. Downloading Packages into the Environment**
 ```bash

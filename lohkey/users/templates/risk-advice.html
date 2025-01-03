@@ -158,15 +158,16 @@
 
     <!-- Main Content -->
     <div class="container">
-        <h2>Welcome to Project Lohkey</h2>
+
 
         {% if not user.is_authenticated %}
+        <h2>Welcome to Project Lohkey</h2>
         <a href="{% provider_login_url 'google' %}?next=/" class="login-btn">Login with Google</a>
         {% else %}
         <div class="user-info">
-            <p>You are signed in as <strong>{{ user.email }}</strong></p>
+            <h2>Welcome to the Risk Advice page</h2>
             <br>
-            <p>You are now in our homepage, please toggle between the different navigation bar sections to explore further</p>
+            <p>We are going to give you some advice based on our analysis of yoru portfolio</p>
         </div>
         {% endif %}
     </div>

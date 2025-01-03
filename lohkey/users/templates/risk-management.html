@@ -158,15 +158,16 @@
 
     <!-- Main Content -->
     <div class="container">
-        <h2>Welcome to Project Lohkey</h2>
+
 
         {% if not user.is_authenticated %}
+        <h2>Welcome to Project Lohkey</h2>
         <a href="{% provider_login_url 'google' %}?next=/" class="login-btn">Login with Google</a>
         {% else %}
         <div class="user-info">
-            <p>You are signed in as <strong>{{ user.email }}</strong></p>
+            <h2>Welcome to the Risk Management page</h2>
             <br>
-            <p>You are now in our homepage, please toggle between the different navigation bar sections to explore further</p>
+            <p>In this page, your are able to see your most risky assets and determine the suitablility of your investment for your risk profile</p>
         </div>
         {% endif %}
     </div>

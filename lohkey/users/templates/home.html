@@ -5,16 +5,190 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lohkey Log in</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color: #4285F4;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .navbar .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .navbar .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .navbar .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        .navbar .user-icon {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .navbar .user-icon img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            padding: 10px;
+            z-index: 1000;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            text-decoration: none;
+            color: #333;
+            padding: 8px 12px;
+            font-size: 14px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 100px auto;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #555;
+        }
+
+        .login-btn {
+            display: inline-block;
+            background-color: #4285F4;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background-color: #357ae8;
+        }
+
+        .user-info {
+            margin-top: 20px;
+        }
+
+        .logout-btn {
+            margin-top: 10px;
+            display: inline-block;
+            background-color: #e63946;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: #d62828;
+        }
+    </style>
 </head>
 <body>
-    {% load socialaccount %}
-    <h2>Google Login</h2>
-    <a href="{% provider_login_url 'google' %}?next=/">Login with Google</a>
+    <!-- Navbar -->
+    <div class="navbar">
 
-    {% if user.is_authenticated %}
-    <p>You are signed in as {{user.email}}</p>
-    <a href="logout">Logout</a>
-    {% endif %}
+            {% load socialaccount %}
 
+            {% if user.is_authenticated %}
+            <div class="nav-links">
+                <a href="/portfolio">Portfolio</a>
+                <a href="/risk-management">Risk Management</a>
+                <a href="/risk-advice">Risk Advice</a>
+            </div>
+            <div class="user-icon" onclick="toggleDropdown()">
+                <img src="{{ user.socialaccount_set.first.extra_data.picture }}" alt="User Icon">
+                <span>{{ user.first_name }}</span>
+                <div class="dropdown-menu" id="dropdown-menu">
+                    <a href="/logout">Logout</a>
+                </div>
+            {% else %}
+                <a href="{% provider_login_url 'google' %}" class="login-btn">Login</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h2>Welcome to Project Lohkey</h2>
+
+        {% if not user.is_authenticated %}
+        <a href="{% provider_login_url 'google' %}?next=/" class="login-btn">Login with Google</a>
+        {% else %}
+        <div class="user-info">
+            <p>You are signed in as <strong>{{ user.email }}</strong></p>
+            <br>
+            <p>You are now in our homepage, please toggle between the different navigation bar sections to continue</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdown-menu');
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            } else {
+                dropdown.style.display = 'block';
+            }
+        }
+
+        // Close the dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('dropdown-menu');
+            const userIcon = document.querySelector('.user-icon');
+            if (!userIcon.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>

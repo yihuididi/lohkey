@@ -1,10 +1,10 @@
-#Project Lohkey#
+# Project Lohkey #
 
 This project uses Django as the backend framework to handle business logic and database interactions, while the frontend is built with basic HTML and CSS for simplicity.
 
 _____________________________________________________________________________________________
 
-##What Does This Project Use?##
+## What Does This Project Use? ##
 
 •	**Backend:** Django
 •	**Frontend:** HTML and CSS
@@ -12,7 +12,7 @@ ________________________________________________________________________________
 
 _____________________________________________________________________________________________
 
-##How Things Work Around Here?##
+## How Things Work Around Here? ##
 
 1. Routers
    
@@ -34,7 +34,7 @@ The templates (HTML files) are stored in the templates directory of each app.
 
 _____________________________________________________________________________________________
 
-##Basic Commands##
+## Basic Commands ##
 
 **1. Running the Server**
 ```bash

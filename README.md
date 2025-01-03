@@ -6,9 +6,9 @@ ________________________________________________________________________________
 
 ## What Does This Project Use? ##
 
-•** Backend:** Django
+**• Backend:** Django
 
-•** Frontend:** HTML and CSS
+**• Frontend:** HTML and CSS
 (Note: React or Vue.js is intentionally avoided for simplicity.)
 
 _____________________________________________________________________________________________

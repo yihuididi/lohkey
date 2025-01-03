@@ -16,21 +16,14 @@ ________________________________________________________________________________
 
 1. Routers
    
-**•	Files Handling Routers:**
-The routing logic for this project is defined in the following files:
+	**• Routers:**
+   	The two files "lohkey/lohkey/users/urls.py" and "lohkey/lohkey/users/views.py" are both used as routers
 
-	•	urls.py: This file is where URL patterns are defined. Each URL is mapped to a corresponding view function in the views.py file.
-	  •	Example:
-	    •	lohkey/urls.py defines project-level routing.
-	    •	App-specific routing is defined in app directories (e.g., users/urls.py).
 
-2. Templates
+3. Templates
    
-**•	Files Handling Templates:**
-The templates (HTML files) are stored in the templates directory of each app.
-	•	Example:
-	  •	lohkey/users/templates/home.html: This is the HTML file rendered by the home view.
-	  •	Template Directory Configuration: The DIRS setting in settings.py ensures Django can locate these templates.
+	**• Files Handling Templates:**
+The templates (HTML files) are stored in the templates directory of each app. (e.g. lohkey/users/templates/home.html: This is the HTML file rendered by the home view.)
 
 _____________________________________________________________________________________________
 

@@ -15,14 +15,14 @@ ________________________________________________________________________________
 
 ## How Things Work Around Here? ##
 
-1. Routers
+**1. Routers**
    
-The two files "lohkey/lohkey/users/urls.py" and "lohkey/lohkey/users/views.py" are both used as routers
+   • The two files "lohkey/lohkey/users/urls.py" and "lohkey/lohkey/users/views.py" are both used as routers
 
 
-2. Templates
+**2. Templates**
    
-The templates (HTML files) are stored in the templates directory of each app. (e.g. lohkey/users/templates/home.html: This is the HTML file rendered by the home view.)
+   • The templates (HTML files) are stored in the templates directory of each app. (e.g. lohkey/users/templates/home.html: This is the HTML file rendered by the home view.)
 
 _____________________________________________________________________________________________
 

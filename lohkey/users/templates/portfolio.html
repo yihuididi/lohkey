@@ -134,31 +134,13 @@
 </head>
 <body>
     <!-- Navbar -->
-    <div class="navbar">
+    {% include 'includes/navbar.html' %}
 
-            {% load socialaccount %}
-
-            {% if user.is_authenticated %}
-            <div class="nav-links">
-                <a href="/portfolio">Portfolio</a>
-                <a href="/risk-management">Risk Management</a>
-                <a href="/risk-advice">Risk Advice</a>
-            </div>
-            <div class="user-icon" onclick="toggleDropdown()">
-                <img src="{{ user.socialaccount_set.first.extra_data.picture }}" alt="User Icon">
-                <span>{{ user.first_name }}</span>
-                <div class="dropdown-menu" id="dropdown-menu">
-                    <a href="/logout">Logout</a>
-                </div>
-            {% else %}
-                <a href="{% provider_login_url 'google' %}" class="login-btn">Login</a>
-            {% endif %}
-        </div>
-    </div>
 
     <!-- Main Content -->
     <div class="container">
 
+        {% load socialaccount %}
 
         {% if not user.is_authenticated %}
         <h2>Welcome to Project Lohkey</h2>

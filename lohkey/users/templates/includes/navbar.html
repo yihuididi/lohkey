@@ -1,0 +1,147 @@
+<!-- users/templates/includes/navbar.html -->
+<div class="navbar">
+    {% load static %}
+    {% load socialaccount %}
+
+    <!-- Team Logo on the Left -->
+    <div class="logo">
+        <a href="/">
+            <img src="{% static 'images/lohkey.png' %}" alt="Team Lohkey Logo" class="team-logo">
+        </a>
+    </div>
+
+    {% if user.is_authenticated %}
+    <!-- Navigation Links -->
+    <div class="nav-links">
+        <a href="/portfolio" class="{% if request.path == '/portfolio' %}active{% endif %}">Portfolio</a>
+        <a href="/risk-management" class="{% if request.path == '/risk-management' %}active{% endif %}">Risk Management</a>
+        <a href="/risk-advice" class="{% if request.path == '/risk-advice' %}active{% endif %}">Risk Advice</a>
+    </div>
+
+    <!-- User Profile and Dropdown -->
+    <div class="user-icon" onclick="toggleDropdown()">
+        <img src="{{ user.socialaccount_set.first.extra_data.picture }}" alt="User Icon">
+        <span>{{ user.first_name }}</span>
+        <div class="dropdown-menu" id="dropdown-menu">
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+    {% else %}
+    <a href="{% provider_login_url 'google' %}" class="login-btn">Login</a>
+    {% endif %}
+</div>
+
+<script>
+    function toggleDropdown() {
+        const dropdown = document.getElementById('dropdown-menu');
+        if (dropdown.style.display === 'block') {
+            dropdown.style.display = 'none';
+        } else {
+            dropdown.style.display = 'block';
+        }
+    }
+
+    // Close the dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('dropdown-menu');
+        const userIcon = document.querySelector('.user-icon');
+        if (!userIcon.contains(event.target)) {
+            dropdown.style.display = 'none';
+        }
+    });
+</script>
+
+<style>
+    .navbar {
+        background-color: #4285F4;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+    }
+
+    .team-logo {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 20px;
+    }
+
+    .nav-links a {
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: bold;
+        position: relative;
+    }
+
+    .nav-links a.active {
+        text-decoration: underline;
+    }
+
+    .user-icon {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+    }
+
+    .user-icon img {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 2px solid white;
+    }
+
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 40px;
+        right: 0;
+        background-color: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+        padding: 10px;
+        z-index: 1000;
+    }
+
+    .dropdown-menu a {
+        display: block;
+        text-decoration: none;
+        color: #333;
+        padding: 8px 12px;
+        font-size: 14px;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+
+    .dropdown-menu a:hover {
+        background-color: #f0f0f0;
+    }
+
+    .login-btn {
+        display: inline-block;
+        background-color: #4285F4;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+    }
+
+    .login-btn:hover {
+        background-color: #357ae8;
+    }
+</style>

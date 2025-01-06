@@ -8,5 +8,6 @@ urlpatterns = [
     path("logout", views.logout_view),
     path("portfolio", views.portfolio_view),
     path("risk-management", views.risk_management_view),
-    path("risk-advice", views.risk_advice_view)
+    path("risk-advice", views.risk_advice_view),
+    path("submit-wallet-address/", views.submit_wallet_address, name="submit_wallet_address"),
 ]

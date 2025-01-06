@@ -9,15 +9,11 @@ cred_path = os.path.join(BASE_DIR, "lohkey-91b0d-firebase-adminsdk-32057-3cd75b4
 # Print the absolute path for debugging
 print("Using credentials file at:", cred_path)
 
-# Use the credentials
-cred = credentials.Certificate(cred_path)
-firebase_admin.initialize_app(cred)
+# Initialize Firebase app only once
+if not firebase_admin._apps:
+    cred = credentials.Certificate(cred_path)
+    firebase_admin.initialize_app(cred)
+    print("Firebase app initialized.")
 
+# Firestore client
 db = firestore.client()
-
-data = {
-    'task': 'wash the dishes',
-}
-
-doc_ref = db.collection('taskscollection').document()
-doc_ref.set(data)

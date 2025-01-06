@@ -1,0 +1,6 @@
+<form method="post">
+    {% csrf_token %}
+    <label>Stock Ticker:</label>
+    <input type="text" name="stock_ticker" required>
+    <button type="submit">Predict</button>
+</form>

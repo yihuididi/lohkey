@@ -3,6 +3,8 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from allauth.socialaccount.models import SocialAccount
 from firestore import db 
+from django.shortcuts import render, HttpResponse
+from .model import predict_market_risk, predict_credit_risk_logistic, predict_credit_risk_random_forest
 
 @login_required
 def home(request):
@@ -68,4 +70,29 @@ def risk_management_view(request):
 def risk_advice_view(request):
     return render(request, "risk-advice.html")
 
- 
+def market_risk_view(request):
+    if request.method == 'POST':
+        stock_ticker = request.POST.get('stock_ticker')
+        result = predict_market_risk(stock_ticker)
+        return HttpResponse(f"Market Risk Prediction: {result}")
+    return render(request, 'market_risk.html')
+
+def credit_risk_logistic_view(request):
+    if request.method == 'POST':
+        loan_amount = float(request.POST.get('loan_amount'))
+        income = float(request.POST.get('income'))
+        credit_score = int(request.POST.get('credit_score'))
+        debt_to_income_ratio = float(request.POST.get('debt_to_income_ratio'))
+        result = predict_credit_risk_logistic(loan_amount, income, credit_score, debt_to_income_ratio)
+        return HttpResponse(f"Credit Risk (Logistic Regression): {result}")
+    return render(request, 'credit_risk_logistic.html')
+
+def credit_risk_random_forest_view(request):
+    if request.method == 'POST':
+        loan_amount = float(request.POST.get('loan_amount'))
+        income = float(request.POST.get('income'))
+        credit_score = int(request.POST.get('credit_score'))
+        debt_to_income_ratio = float(request.POST.get('debt_to_income_ratio'))
+        result = predict_credit_risk_random_forest(loan_amount, income, credit_score, debt_to_income_ratio)
+        return HttpResponse(f"Credit Risk (Random Forest): {result}")
+    return render(request, 'credit_risk_random_forest.html')

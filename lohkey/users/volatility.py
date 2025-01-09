@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 import json
 import pandas as pd
+import numpy as np
 
 def load_data(json_file):
     with open(json_file, "r") as file:
@@ -14,13 +15,20 @@ def load_data(json_file):
     return pd.DataFrame(all_data, columns=["coin", "date", "metric", "value"])
 
 def calculate_volatility(df):
-    returns = df.set_index(['coin', 'metric']).pct_change(axis=1)
-    volatility = returns.std(axis=1)
-    volatility_df = volatility.reset_index(name='volatility')
-    return volatility_df
+    # Calculate daily returns for each coin
+    returns = df.groupby('coin').apply(lambda x: x.set_index('date')['value'].pct_change())
+    # Calculate the mean of returns for each coin for each date
+    returns = returns.groupby(level=0).apply(lambda x: x.groupby(level=0).mean())
+    # Calculate volatility (standard deviation of returns) for each coin
+    volatility = returns.groupby(level=0).std()
+    volatility = volatility.reset_index()
+    volatility.columns = ['coin', 'volatility']
+    return volatility
 
 def categorize_risk(volatility):
-    if volatility < 0.01:
+    if np.isnan(volatility):
+        return 'Not Available'
+    elif volatility < 0.01:
         return 'Low Risk'
     elif 0.01 <= volatility < 0.2:
         return 'Moderate Risk'
@@ -28,20 +36,18 @@ def categorize_risk(volatility):
         return 'High Risk'
 
 def save_to_json(df, output_file):
-    # Convert DataFrame to a list of dictionaries
     data = df.to_dict(orient='records')
-    # Write the list of dictionaries to a JSON file
     with open(output_file, 'w') as f:
-        json.dump(data, f, indent=4) # indent for pretty printing (optional)
-
+        json.dump(data, f, indent=4)
 
 def main():
     json_file = "lohkey/static/historical_data.json"
     output_file = "lohkey/static/volatility_data.json"
 
     df = load_data(json_file)
-    df = df.groupby(["coin", "metric", "date"], as_index=False).mean()
-    df = df.pivot(index=["coin", "metric"], columns="date", values="value").reset_index()
+    # Group by coin and date and calculate the mean of the values
+    df = df.groupby(["coin", "date"], as_index=False).mean()
+
     volatility_df = calculate_volatility(df)
     volatility_df['risk_category'] = volatility_df['volatility'].apply(categorize_risk)
     final_df = volatility_df[['coin', 'volatility', 'risk_category']]

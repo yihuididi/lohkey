@@ -33,9 +33,9 @@ def calculate_liquidity_risk(df):
 def categorize_liquidity_risk(liquidity_risk):
     if np.isnan(liquidity_risk):
         return 'Not Available'
-    elif liquidity_risk < 0.05:
+    elif liquidity_risk < 0.005:
         return 'Low Liquidity Risk'
-    elif 0.05 <= liquidity_risk < 0.15:
+    elif 0.005 <= liquidity_risk < 0.015:
         return 'Moderate Liquidity Risk'
     else:
         return 'High Liquidity Risk'
@@ -52,7 +52,7 @@ def main():
     df = load_data(json_file)
 
     # Filter for volume data *before* grouping for correct liquidity calculation
-    df_volume = df[df['metric'] == 'volume'].copy()
+    df_volume = df[df['metric'] == 'total_volume'].copy()
 
     if df_volume.empty:
         print("No volume data found. Liquidity risk cannot be calculated.")

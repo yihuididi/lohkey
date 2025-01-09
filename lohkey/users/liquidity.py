@@ -14,7 +14,7 @@ def load_data(json_file):
                     all_data.append([coin, date, metric, value])
     df = pd.DataFrame(all_data, columns=["coin", "date", "metric", "value"])
     df['value'] = pd.to_numeric(df['value'], errors='coerce')
-    df['date'] = pd.to_datetime(df['date'])  # Convert date to datetime
+    df['date'] = pd.to_datetime(df['date'])
     return df
 
 def calculate_liquidity_risk(df):
@@ -25,6 +25,7 @@ def calculate_liquidity_risk(df):
     df['volume_change'] = df.groupby('coin')['value'].pct_change()
     df['abs_volume_change'] = df['volume_change'].abs()
 
+    # Handle cases with only one data point per coin after pct_change
     liquidity_risk = df.groupby('coin')['abs_volume_change'].apply(lambda x: x.mean(skipna=True) if len(x) > 1 else np.nan)
     liquidity_risk = liquidity_risk.reset_index()
     liquidity_risk.columns = ['coin', 'liquidity_risk']
@@ -33,9 +34,9 @@ def calculate_liquidity_risk(df):
 def categorize_liquidity_risk(liquidity_risk):
     if np.isnan(liquidity_risk):
         return 'Not Available'
-    elif liquidity_risk < 0.05:
+    elif liquidity_risk < 0.35:
         return 'Low Liquidity Risk'
-    elif 0.05 <= liquidity_risk < 0.15:
+    elif 0.35 <= liquidity_risk < 0.45:
         return 'Moderate Liquidity Risk'
     else:
         return 'High Liquidity Risk'

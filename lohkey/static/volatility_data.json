@@ -1,0 +1,252 @@
+[
+    {
+        "coin": "aave",
+        "volatility": 0.1316588605113522,
+        "risk_category": "High Risk"
+    },
+    {
+        "coin": "aptos",
+        "volatility": 0.055178050462664545,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "arbitrum",
+        "volatility": 0.10301214638644247,
+        "risk_category": "High Risk"
+    },
+    {
+        "coin": "avalanche-2",
+        "volatility": 0.07486709413051626,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "binancecoin",
+        "volatility": 0.03595543659578598,
+        "risk_category": "Low Risk"
+    },
+    {
+        "coin": "bitcoin",
+        "volatility": 0.025744791581307623,
+        "risk_category": "Low Risk"
+    },
+    {
+        "coin": "bitcoin-cash",
+        "volatility": 0.06457326074571146,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "bitget-token",
+        "volatility": 0.08675965112280662,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "bittensor",
+        "volatility": 0.05849744547973885,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "cardano",
+        "volatility": 0.0785503511478101,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "chainlink",
+        "volatility": 0.19281398038750772,
+        "risk_category": "High Risk"
+    },
+    {
+        "coin": "crypto-com-chain",
+        "volatility": 0.05334314009879054,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "dai",
+        "volatility": 0.020890002270543703,
+        "risk_category": "Low Risk"
+    },
+    {
+        "coin": "dogecoin",
+        "volatility": 0.06651932519761845,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "ethena-usde",
+        "volatility": 0.025787187149572902,
+        "risk_category": "Low Risk"
+    },
+    {
+        "coin": "ethereum",
+        "volatility": 0.047962181297364445,
+        "risk_category": "Low Risk"
+    },
+    {
+        "coin": "ethereum-classic",
+        "volatility": 0.08563961440309867,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "fetch-ai",
+        "volatility": 0.08761307021099572,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "hedera-hashgraph",
+        "volatility": 0.16879592569529245,
+        "risk_category": "High Risk"
+    },
+    {
+        "coin": "hyperliquid",
+        "volatility": 0.11114864173623806,
+        "risk_category": "High Risk"
+    },
+    {
+        "coin": "internet-computer",
+        "volatility": 0.06674369105793164,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "leo-token",
+        "volatility": 0.02356371227307561,
+        "risk_category": "Low Risk"
+    },
+    {
+        "coin": "litecoin",
+        "volatility": 0.09928120807426082,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "mantle",
+        "volatility": 0.05811509552216963,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "mantra-dao",
+        "volatility": 0.05498014013099665,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "monero",
+        "volatility": 0.05230288396403453,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "near",
+        "volatility": 0.058178710877849565,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "pepe",
+        "volatility": 0.13316476655102039,
+        "risk_category": "High Risk"
+    },
+    {
+        "coin": "polkadot",
+        "volatility": 0.09782827470230174,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "polygon-ecosystem-token",
+        "volatility": 0.07460943074539564,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "render-token",
+        "volatility": 0.10029033913448097,
+        "risk_category": "High Risk"
+    },
+    {
+        "coin": "ripple",
+        "volatility": 0.09594931833336293,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "shiba-inu",
+        "volatility": 0.09962375608440287,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "solana",
+        "volatility": 0.0421915515595726,
+        "risk_category": "Low Risk"
+    },
+    {
+        "coin": "staked-ether",
+        "volatility": 0.037547389540039056,
+        "risk_category": "Low Risk"
+    },
+    {
+        "coin": "stellar",
+        "volatility": 0.17522930403029813,
+        "risk_category": "High Risk"
+    },
+    {
+        "coin": "sui",
+        "volatility": 0.09938386319491095,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "tether",
+        "volatility": 0.2577392152185788,
+        "risk_category": "High Risk"
+    },
+    {
+        "coin": "the-open-network",
+        "volatility": 0.047706378917269796,
+        "risk_category": "Low Risk"
+    },
+    {
+        "coin": "tokenize-xchange",
+        "volatility": 0.10080028454117626,
+        "risk_category": "High Risk"
+    },
+    {
+        "coin": "tron",
+        "volatility": 0.17926394914680682,
+        "risk_category": "High Risk"
+    },
+    {
+        "coin": "uniswap",
+        "volatility": 0.08716911493836293,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "usd-coin",
+        "volatility": 0.08610201831039317,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "usds",
+        "volatility": 0.015902043832003276,
+        "risk_category": "Low Risk"
+    },
+    {
+        "coin": "vechain",
+        "volatility": 0.12754434814044405,
+        "risk_category": "High Risk"
+    },
+    {
+        "coin": "virtual-protocol",
+        "volatility": 0.14739186822705178,
+        "risk_category": "High Risk"
+    },
+    {
+        "coin": "weth",
+        "volatility": 0.055711741508020086,
+        "risk_category": "Moderate Risk"
+    },
+    {
+        "coin": "wrapped-bitcoin",
+        "volatility": 0.027134209960126318,
+        "risk_category": "Low Risk"
+    },
+    {
+        "coin": "wrapped-eeth",
+        "volatility": 0.04189493451815909,
+        "risk_category": "Low Risk"
+    },
+    {
+        "coin": "wrapped-steth",
+        "volatility": 0.03795729530647663,
+        "risk_category": "Low Risk"
+    }
+]

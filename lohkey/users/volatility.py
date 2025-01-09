@@ -12,7 +12,10 @@ def load_data(json_file):
                 for timestamp, value in info:
                     date = datetime.fromtimestamp(timestamp / 1000, tz=timezone.utc).strftime("%Y-%m-%d")
                     all_data.append([coin, date, metric, value])
-    return pd.DataFrame(all_data, columns=["coin", "date", "metric", "value"])
+    df = pd.DataFrame(all_data, columns=["coin", "date", "metric", "value"])
+    df['value'] = pd.to_numeric(df['value'], errors='coerce')  # Convert 'value' to numeric
+    df['date'] = pd.to_datetime(df['date'])  # Convert 'date' to datetime
+    return df
 
 def calculate_volatility(df):
     # Calculate daily returns for each coin
@@ -43,7 +46,8 @@ def main():
     output_file = "lohkey/static/volatility_data.json"
 
     df = load_data(json_file)
-    # Group by coin and date and calculate the mean of the values
+
+    # Correct way: Group and then select the 'value' column for mean calculation
     df = df.groupby(["coin", "date"], as_index=False)["value"].mean()
 
     volatility_df = calculate_volatility(df)

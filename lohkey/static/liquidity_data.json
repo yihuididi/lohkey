@@ -1,0 +1,252 @@
+[
+    {
+        "coin": "aave",
+        "liquidity_risk": 0.35749410367038,
+        "liquidity_risk_category": "Moderate Liquidity Risk"
+    },
+    {
+        "coin": "aptos",
+        "liquidity_risk": 0.31889699733228455,
+        "liquidity_risk_category": "Low Liquidity Risk"
+    },
+    {
+        "coin": "arbitrum",
+        "liquidity_risk": 0.33295764460611543,
+        "liquidity_risk_category": "Low Liquidity Risk"
+    },
+    {
+        "coin": "avalanche-2",
+        "liquidity_risk": 0.38212700596143856,
+        "liquidity_risk_category": "Moderate Liquidity Risk"
+    },
+    {
+        "coin": "binancecoin",
+        "liquidity_risk": 0.35748936241025575,
+        "liquidity_risk_category": "Moderate Liquidity Risk"
+    },
+    {
+        "coin": "bitcoin",
+        "liquidity_risk": 0.37686474638033896,
+        "liquidity_risk_category": "Moderate Liquidity Risk"
+    },
+    {
+        "coin": "bitcoin-cash",
+        "liquidity_risk": 0.3958795024514522,
+        "liquidity_risk_category": "Moderate Liquidity Risk"
+    },
+    {
+        "coin": "bitget-token",
+        "liquidity_risk": 1.6597319556536048,
+        "liquidity_risk_category": "High Liquidity Risk"
+    },
+    {
+        "coin": "bittensor",
+        "liquidity_risk": 0.29501097474743165,
+        "liquidity_risk_category": "Low Liquidity Risk"
+    },
+    {
+        "coin": "cardano",
+        "liquidity_risk": 0.35376982888436265,
+        "liquidity_risk_category": "Moderate Liquidity Risk"
+    },
+    {
+        "coin": "chainlink",
+        "liquidity_risk": 0.5677993226122588,
+        "liquidity_risk_category": "High Liquidity Risk"
+    },
+    {
+        "coin": "crypto-com-chain",
+        "liquidity_risk": 0.4771856460215437,
+        "liquidity_risk_category": "High Liquidity Risk"
+    },
+    {
+        "coin": "dai",
+        "liquidity_risk": 0.35728551270039594,
+        "liquidity_risk_category": "Moderate Liquidity Risk"
+    },
+    {
+        "coin": "dogecoin",
+        "liquidity_risk": 0.32200018561678306,
+        "liquidity_risk_category": "Low Liquidity Risk"
+    },
+    {
+        "coin": "ethena-usde",
+        "liquidity_risk": 0.41279399084159396,
+        "liquidity_risk_category": "Moderate Liquidity Risk"
+    },
+    {
+        "coin": "ethereum",
+        "liquidity_risk": 0.37667041945840624,
+        "liquidity_risk_category": "Moderate Liquidity Risk"
+    },
+    {
+        "coin": "ethereum-classic",
+        "liquidity_risk": 0.4353700189483439,
+        "liquidity_risk_category": "Moderate Liquidity Risk"
+    },
+    {
+        "coin": "fetch-ai",
+        "liquidity_risk": 0.2907849570145029,
+        "liquidity_risk_category": "Low Liquidity Risk"
+    },
+    {
+        "coin": "hedera-hashgraph",
+        "liquidity_risk": 0.39208075925594277,
+        "liquidity_risk_category": "Moderate Liquidity Risk"
+    },
+    {
+        "coin": "hyperliquid",
+        "liquidity_risk": 1.2325117671093122,
+        "liquidity_risk_category": "High Liquidity Risk"
+    },
+    {
+        "coin": "internet-computer",
+        "liquidity_risk": 0.22575991064470502,
+        "liquidity_risk_category": "Low Liquidity Risk"
+    },
+    {
+        "coin": "leo-token",
+        "liquidity_risk": 0.5386131947829084,
+        "liquidity_risk_category": "High Liquidity Risk"
+    },
+    {
+        "coin": "litecoin",
+        "liquidity_risk": 0.3372731168702605,
+        "liquidity_risk_category": "Low Liquidity Risk"
+    },
+    {
+        "coin": "mantle",
+        "liquidity_risk": 0.27873116019221406,
+        "liquidity_risk_category": "Low Liquidity Risk"
+    },
+    {
+        "coin": "mantra-dao",
+        "liquidity_risk": 0.37453410753424465,
+        "liquidity_risk_category": "Moderate Liquidity Risk"
+    },
+    {
+        "coin": "monero",
+        "liquidity_risk": 0.22875278262542081,
+        "liquidity_risk_category": "Low Liquidity Risk"
+    },
+    {
+        "coin": "near",
+        "liquidity_risk": 0.28371840351161315,
+        "liquidity_risk_category": "Low Liquidity Risk"
+    },
+    {
+        "coin": "pepe",
+        "liquidity_risk": 0.30141437857866227,
+        "liquidity_risk_category": "Low Liquidity Risk"
+    },
+    {
+        "coin": "polkadot",
+        "liquidity_risk": 0.34201844335852366,
+        "liquidity_risk_category": "Low Liquidity Risk"
+    },
+    {
+        "coin": "polygon-ecosystem-token",
+        "liquidity_risk": 0.3130995988905887,
+        "liquidity_risk_category": "Low Liquidity Risk"
+    },
+    {
+        "coin": "render-token",
+        "liquidity_risk": 0.43872617271048775,
+        "liquidity_risk_category": "Moderate Liquidity Risk"
+    },
+    {
+        "coin": "ripple",
+        "liquidity_risk": 0.359046990687303,
+        "liquidity_risk_category": "Moderate Liquidity Risk"
+    },
+    {
+        "coin": "shiba-inu",
+        "liquidity_risk": 0.3713394734770339,
+        "liquidity_risk_category": "Moderate Liquidity Risk"
+    },
+    {
+        "coin": "solana",
+        "liquidity_risk": 0.2721599782225364,
+        "liquidity_risk_category": "Low Liquidity Risk"
+    },
+    {
+        "coin": "staked-ether",
+        "liquidity_risk": 0.3758103963823919,
+        "liquidity_risk_category": "Moderate Liquidity Risk"
+    },
+    {
+        "coin": "stellar",
+        "liquidity_risk": 0.45146063444706774,
+        "liquidity_risk_category": "High Liquidity Risk"
+    },
+    {
+        "coin": "sui",
+        "liquidity_risk": 0.3589946730666519,
+        "liquidity_risk_category": "Moderate Liquidity Risk"
+    },
+    {
+        "coin": "tether",
+        "liquidity_risk": 0.5298979617967886,
+        "liquidity_risk_category": "High Liquidity Risk"
+    },
+    {
+        "coin": "the-open-network",
+        "liquidity_risk": 0.3098671019459918,
+        "liquidity_risk_category": "Low Liquidity Risk"
+    },
+    {
+        "coin": "tokenize-xchange",
+        "liquidity_risk": 0.40466111450928327,
+        "liquidity_risk_category": "Moderate Liquidity Risk"
+    },
+    {
+        "coin": "tron",
+        "liquidity_risk": 0.4275328569549235,
+        "liquidity_risk_category": "Moderate Liquidity Risk"
+    },
+    {
+        "coin": "uniswap",
+        "liquidity_risk": 0.3695824186988865,
+        "liquidity_risk_category": "Moderate Liquidity Risk"
+    },
+    {
+        "coin": "usd-coin",
+        "liquidity_risk": 0.4541778182871264,
+        "liquidity_risk_category": "High Liquidity Risk"
+    },
+    {
+        "coin": "usds",
+        "liquidity_risk": 0.7936476665418104,
+        "liquidity_risk_category": "High Liquidity Risk"
+    },
+    {
+        "coin": "vechain",
+        "liquidity_risk": 0.43313760464832707,
+        "liquidity_risk_category": "Moderate Liquidity Risk"
+    },
+    {
+        "coin": "virtual-protocol",
+        "liquidity_risk": 0.312881020660365,
+        "liquidity_risk_category": "Low Liquidity Risk"
+    },
+    {
+        "coin": "weth",
+        "liquidity_risk": 0.657315876145132,
+        "liquidity_risk_category": "High Liquidity Risk"
+    },
+    {
+        "coin": "wrapped-bitcoin",
+        "liquidity_risk": 0.42443403062733676,
+        "liquidity_risk_category": "Moderate Liquidity Risk"
+    },
+    {
+        "coin": "wrapped-eeth",
+        "liquidity_risk": 0.8760257692184487,
+        "liquidity_risk_category": "High Liquidity Risk"
+    },
+    {
+        "coin": "wrapped-steth",
+        "liquidity_risk": 0.4506114378321945,
+        "liquidity_risk_category": "High Liquidity Risk"
+    }
+]

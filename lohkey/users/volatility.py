@@ -46,7 +46,7 @@ def main():
 
     df = load_data(json_file)
     # Group by coin and date and calculate the mean of the values
-    df = df.groupby(["coin", "date"], as_index=False).mean()
+    df = df.groupby(["coin", "date"], as_index=False)["value"].mean()
 
     volatility_df = calculate_volatility(df)
     volatility_df['risk_category'] = volatility_df['volatility'].apply(categorize_risk)

@@ -12,15 +12,18 @@ def load_data(json_file):
                 for timestamp, value in info:
                     date = datetime.fromtimestamp(timestamp / 1000, tz=timezone.utc).strftime("%Y-%m-%d")
                     all_data.append([coin, date, metric, value])
-    return pd.DataFrame(all_data, columns=["coin", "date", "metric", "value"])
+    df = pd.DataFrame(all_data, columns=["coin", "date", "metric", "value"])
+    df['value'] = pd.to_numeric(df['value'], errors='coerce')  # Convert 'value' to numeric
+    df['date'] = pd.to_datetime(df['date'])  # Convert 'date' to datetime
+    return df
 
 def calculate_volatility(df):
-    # Calculate daily returns for each coin
-    returns = df.groupby('coin').apply(lambda x: x.set_index('date')['value'].pct_change())
-    # Calculate the mean of returns for each coin for each date
-    returns = returns.groupby(level=0).apply(lambda x: x.groupby(level=0).mean())
-    # Calculate volatility (standard deviation of returns) for each coin
-    volatility = returns.groupby(level=0).std()
+    if df.empty:
+        return pd.DataFrame(columns=['coin', 'volatility'])
+
+    df = df.sort_values(by=['coin', 'date'])
+    returns = df.groupby('coin')['value'].pct_change()
+    volatility = returns.groupby('coin').apply(lambda x: x.std(skipna=True) if len(x) > 1 else np.nan)
     volatility = volatility.reset_index()
     volatility.columns = ['coin', 'volatility']
     return volatility
@@ -45,7 +48,8 @@ def main():
     output_file = "lohkey/static/volatility_data.json"
 
     df = load_data(json_file)
-    # Group by coin and date and calculate the mean of the values
+
+    # Correct way: Group and then select the 'value' column for mean calculation
     df = df.groupby(["coin", "date"], as_index=False)["value"].mean()
 
     volatility_df = calculate_volatility(df)

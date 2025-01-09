@@ -14,7 +14,7 @@ def load_data(json_file):
                     all_data.append([coin, date, metric, value])
     df = pd.DataFrame(all_data, columns=["coin", "date", "metric", "value"])
     df['value'] = pd.to_numeric(df['value'], errors='coerce')
-    df['date'] = pd.to_datetime(df['date'])  # Convert date to datetime
+    df['date'] = pd.to_datetime(df['date'])
     return df
 
 def calculate_liquidity_risk(df):
@@ -22,10 +22,10 @@ def calculate_liquidity_risk(df):
         return pd.DataFrame(columns=['coin', 'liquidity_risk'])
 
     df = df.sort_values(by=['coin', 'date'])
-    df['volume_change'] = df.groupby('coin')['value'].pct_change()
-    df['abs_volume_change'] = df['volume_change'].abs()
+    returns = df.groupby('coin')['value'].pct_change()
 
-    liquidity_risk = df.groupby('coin')['abs_volume_change'].apply(lambda x: x.mean(skipna=True) if len(x) > 1 else np.nan)
+    # Handle cases with only one data point per coin after pct_change
+    liquidity_risk = returns.groupby('coin').apply(lambda x: x.abs().mean(skipna=True) if len(x) > 1 else np.nan)
     liquidity_risk = liquidity_risk.reset_index()
     liquidity_risk.columns = ['coin', 'liquidity_risk']
     return liquidity_risk
@@ -51,9 +51,9 @@ def main():
 
     df = load_data(json_file)
 
-    # Filter for volume data
-    df_volume = df[df['metric'] == 'volume'].copy() # Create a copy to avoid SettingWithCopyWarning
-    
+    # Filter for volume data *before* grouping for correct liquidity calculation
+    df_volume = df[df['metric'] == 'volume'].copy()
+
     if df_volume.empty:
         print("No volume data found. Liquidity risk cannot be calculated.")
         return

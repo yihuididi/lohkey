@@ -52,7 +52,7 @@ def main():
     df = load_data(json_file)
 
     # Filter for volume data
-    df_volume = df[df['metric'] == 'volume'].copy() # Create a copy to avoid SettingWithCopyWarning
+    df_volume = df[df['metric'] == 'total_volumes'].copy() # Create a copy to avoid SettingWithCopyWarning
     
     if df_volume.empty:
         print("No volume data found. Liquidity risk cannot be calculated.")

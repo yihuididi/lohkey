@@ -18,12 +18,10 @@ def load_data(json_file):
     return df
 
 def calculate_volatility(df):
-    if df.empty:
-        return pd.DataFrame(columns=['coin', 'volatility'])
-
-    df = df.sort_values(by=['coin', 'date'])
-    returns = df.groupby('coin')['value'].pct_change()
-    volatility = returns.groupby('coin').apply(lambda x: x.std(skipna=True) if len(x) > 1 else np.nan)
+    # Calculate daily returns for each coin
+    returns = df.groupby('coin').apply(lambda x: x.set_index('date')['value'].pct_change())
+    # Calculate volatility (standard deviation of returns) for each coin
+    volatility = returns.groupby(level=0).std()
     volatility = volatility.reset_index()
     volatility.columns = ['coin', 'volatility']
     return volatility
@@ -31,9 +29,9 @@ def calculate_volatility(df):
 def categorize_risk(volatility):
     if np.isnan(volatility):
         return 'Not Available'
-    elif volatility < 0.01:
+    elif volatility < 0.05:
         return 'Low Risk'
-    elif 0.01 <= volatility < 0.2:
+    elif 0.05 <= volatility < 0.1:
         return 'Moderate Risk'
     else:
         return 'High Risk'

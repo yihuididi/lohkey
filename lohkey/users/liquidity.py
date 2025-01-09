@@ -22,10 +22,11 @@ def calculate_liquidity_risk(df):
         return pd.DataFrame(columns=['coin', 'liquidity_risk'])
 
     df = df.sort_values(by=['coin', 'date'])
-    returns = df.groupby('coin')['value'].pct_change()
+    df['volume_change'] = df.groupby('coin')['value'].pct_change()
+    df['abs_volume_change'] = df['volume_change'].abs()
 
     # Handle cases with only one data point per coin after pct_change
-    liquidity_risk = returns.groupby('coin').apply(lambda x: x.abs().mean(skipna=True) if len(x) > 1 else np.nan)
+    liquidity_risk = df.groupby('coin')['abs_volume_change'].apply(lambda x: x.mean(skipna=True) if len(x) > 1 else np.nan)
     liquidity_risk = liquidity_risk.reset_index()
     liquidity_risk.columns = ['coin', 'liquidity_risk']
     return liquidity_risk
@@ -33,9 +34,9 @@ def calculate_liquidity_risk(df):
 def categorize_liquidity_risk(liquidity_risk):
     if np.isnan(liquidity_risk):
         return 'Not Available'
-    elif liquidity_risk < 0.005:
+    elif liquidity_risk < 0.35:
         return 'Low Liquidity Risk'
-    elif 0.005 <= liquidity_risk < 0.015:
+    elif 0.35 <= liquidity_risk < 0.45:
         return 'Moderate Liquidity Risk'
     else:
         return 'High Liquidity Risk'
@@ -51,9 +52,9 @@ def main():
 
     df = load_data(json_file)
 
-    # Filter for volume data *before* grouping for correct liquidity calculation
-    df_volume = df[df['metric'] == 'total_volume'].copy()
-
+    # Filter for volume data
+    df_volume = df[df['metric'] == 'total_volumes'].copy() # Create a copy to avoid SettingWithCopyWarning
+    
     if df_volume.empty:
         print("No volume data found. Liquidity risk cannot be calculated.")
         return

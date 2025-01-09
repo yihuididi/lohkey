@@ -17,17 +17,20 @@ def load_data(json_file):
     return df
 
 def calculate_liquidity_risk(df):
+    if df.empty:  # Handle empty DataFrame
+        return pd.DataFrame(columns=['coin', 'liquidity_risk'])
+
     # Ensure the DataFrame is sorted by coin and date
     df = df.sort_values(by=['coin', 'date'])
 
     # Calculate daily percentage change in volume for each coin
     df['volume_change'] = df.groupby('coin')['value'].pct_change()
-    
-    # Calculate absolute value of volume change to consider both positive and negative large swings
+
+    # Calculate absolute value of volume change
     df['abs_volume_change'] = df['volume_change'].abs()
 
-    # Calculate average absolute daily volume change for each coin
-    liquidity_risk = df.groupby('coin')['abs_volume_change'].mean()
+    # Calculate average absolute daily volume change for each coin, handling cases with few data points
+    liquidity_risk = df.groupby('coin')['abs_volume_change'].apply(lambda x: x.mean(skipna=True) if len(x) > 1 else np.nan)
     liquidity_risk = liquidity_risk.reset_index()
     liquidity_risk.columns = ['coin', 'liquidity_risk']
     return liquidity_risk
@@ -66,3 +69,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

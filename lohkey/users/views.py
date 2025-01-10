@@ -192,7 +192,6 @@ def portfolio_view(request):
     })
 
 
-
 def coin_list_view(request):
     """
     Fetches and displays the list of top 50 cryptocurrencies.

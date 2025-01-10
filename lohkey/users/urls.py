@@ -14,6 +14,7 @@ urlpatterns = [
     path("wallet-address/", views.wallet_address_view, name="wallet_address"),
     path("select-chains/", views.select_chains_view, name="select_chains"),
     path("portfolio/", views.portfolio_view, name="portfolio"),
+    path("fetch-token-analysis/", views.fetch_token_analysis, name="fetch_token_analysis"),
     
     # Risk Management and Advice
     path("risk-management/", views.risk_management_view, name="risk_management"),

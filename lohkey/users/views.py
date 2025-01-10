@@ -5,6 +5,7 @@ from allauth.socialaccount.models import SocialAccount
 from firestore import db 
 from django.shortcuts import render, HttpResponse
 from users.wallet_utils import multi_chain_query, analyze_liquidity, fetch_historical_data, fetch_coin_list, analyze_volatility, get_crypto_predictions
+from django.http import JsonResponse
 
 
 @login_required
@@ -69,6 +70,22 @@ def wallet_address_view(request):
         return redirect("select_chains")
 
     return render(request, "wallet_address.html")
+
+def fetch_token_analysis(request):
+    if request.method == "GET":
+        token_name = request.GET.get("token_name")
+        if not token_name:
+            return JsonResponse({"error": "Token name is required."}, status=400)
+
+        # Example: Fetch analysis data for the token
+        analysis_data = {
+            "liquidity": analyze_liquidity("static/historical_data.json"),  # Replace with token-specific logic
+            "volatility": analyze_volatility("static/historical_data.json"),  # Replace with token-specific logic
+            "price_prediction": get_crypto_predictions(token_name),  # Replace with actual logic
+        }
+
+        return JsonResponse(analysis_data)
+    return JsonResponse({"error": "Invalid request method."}, status=405)
 
 
 def risk_management_view(request):

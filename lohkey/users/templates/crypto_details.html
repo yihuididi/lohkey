@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: space-around;
+            background-color: #4285F4;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .nav-tabs .tab {
+            color: white;
+            cursor: pointer;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .nav-tabs .tab.active {
+            background-color: white;
+            color: #4285F4;
+            border: 2px solid #4285F4;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table th, table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #4285F4;
+            color: white;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin: 10px 0;
+            background: #f9f9f9;
+        }
+
+        .metric strong {
+            color: #333;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #777;
+            font-style: italic;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #4285F4;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .back-button:hover {
+            background-color: #357ae8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Crypto Details for {{ crypto_id|title }}</h1>
+
+        <!-- Back to Coin List Button -->
+        <a href="{% url 'coin_list' %}" class="back-button">Back to Coin List</a>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <div class="tab active" onclick="showTab('historical')">Historical Pricing</div>
+            <div class="tab" onclick="showTab('predicted')">Predicted Prices</div>
+            <div class="tab" onclick="showTab('metrics')">Key Metrics</div>
+        </div>
+
+        <!-- Historical Pricing Content -->
+        <div id="historical" class="tab-content active">
+            <h2>Historical Prices</h2>
+            {% if predictions.historical_prices %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Day</th>
+                            <th>Price (USD)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for price in predictions.historical_prices|slice:":30" %}
+                        <tr>
+                            <td>Day {{ forloop.counter }}</td>
+                            <td>${{ price.price|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="empty-message">No historical prices available for this cryptocurrency.</p>
+            {% endif %}
+        </div>
+
+        <!-- Predicted Prices Content -->
+        <div id="predicted" class="tab-content">
+            <h2>Predicted Prices (Next 14 Days)</h2>
+            {% if predictions.predicted_prices %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Day</th>
+                            <th>Predicted Price (USD)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in predictions.predicted_prices %}
+                        <tr>
+                            <td>{{ item.date }}</td>
+                            <td>${{ item.price|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="empty-message">No predicted prices available for this cryptocurrency.</p>
+            {% endif %}
+        </div>
+
+        <!-- Key Metrics Content -->
+        <div id="metrics" class="tab-content">
+            <h2>Key Metrics</h2>
+            {% if metrics %}
+                <div class="metric"><span>Current Price:</span> <strong>${{ metrics.current_price|floatformat:2 }}</strong></div>
+                <div class="metric"><span>Volatility:</span> <strong>{{ metrics.volatility|floatformat:2 }}</strong></div>
+                <div class="metric"><span>7-Day Moving Average:</span> <strong>${{ metrics.7_day_moving_average|floatformat:2 }}</strong></div>
+                <div class="metric"><span>30-Day Moving Average:</span> <strong>${{ metrics.30_day_moving_average|floatformat:2 }}</strong></div>
+                <div class="metric"><span>RSI:</span> <strong>{{ metrics.rsi|floatformat:2 }}</strong></div>
+                <div class="metric"><span>All-Time High:</span> <strong>${{ metrics.all_time_high|floatformat:2 }}</strong></div>
+                <div class="metric"><span>Drawdown:</span> <strong>{{ metrics.drawdown|floatformat:2 }}%</strong></div>
+                <div class="metric"><span>Average Trading Volume:</span> <strong>{{ metrics.average_volume|floatformat:0 }}</strong></div>
+            {% else %}
+                <p class="empty-message">No metrics available for this cryptocurrency.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.querySelector(`.tab[onclick="showTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+    </script>
+</body>
+</html>

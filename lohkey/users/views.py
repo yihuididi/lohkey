@@ -4,9 +4,13 @@ from django.contrib.auth.decorators import login_required
 from allauth.socialaccount.models import SocialAccount
 from firestore import db 
 from django.shortcuts import render, HttpResponse
-from users.wallet_utils import multi_chain_query, analyze_liquidity, fetch_historical_data, fetch_coin_list, analyze_volatility, get_crypto_predictions
+from users.wallet_utils import multi_chain_query, analyze_liquidity, fetch_historical_data, fetch_coin_list, analyze_volatility, get_crypto_predictions, get_crypto_metrics
 from django.http import JsonResponse
+import requests
 
+
+def landing_page(request):
+    return render(request, "landingpage.html")
 
 @login_required
 def home(request):
@@ -19,28 +23,27 @@ def logout_view(request):
 
 @login_required
 def portfolio_view(request):
-    try:
-        print(f"Inside portfolio_view. Google User ID: {request.google_user_id}")
+    # Retrieve wallet address and selected chains from session
+    wallet_address = request.session.get("wallet_address")
+    selected_chains = request.session.get("selected_chains")
 
-        if not request.google_user_id:
-            print("Google User ID is missing.")
-            return render(request, "portfolio.html", {"error": "Google account is not linked."})
+    # Redirect to wallet address input page if missing
+    if not wallet_address:
+        return redirect("wallet_address")
+    
+    if not selected_chains:
+        return redirect("select_chains")
 
-        # Check if walletID exists in Firebase
-        doc_ref = db.collection("walletID").document(request.google_user_id)
-        wallet_data = doc_ref.get()
+    # Fetch portfolio data
+    portfolio = multi_chain_query(wallet_address, selected_chains)
 
-        if wallet_data.exists:
-            wallet_address = wallet_data.to_dict().get("walletAddress")
-            print(f"Wallet Address found: {wallet_address}")
-        else:
-            wallet_address = None
-            print("No Wallet Address found.")
+    # Render portfolio template with portfolio data
+    return render(request, "portfolio.html", {
+        "portfolio": portfolio,
+        "wallet_address": wallet_address,
+    })
 
-        return render(request, "portfolio.html", {"wallet_address": wallet_address})
-    except Exception as e:
-        print(f"Error in portfolio_view: {e}")
-        return render(request, "portfolio.html", {"error": "An error occurred while loading the portfolio page."})
+
 
 @login_required
 def wallet_address_view(request):
@@ -71,21 +74,32 @@ def wallet_address_view(request):
 
     return render(request, "wallet_address.html")
 
-def fetch_token_analysis(request):
-    if request.method == "GET":
-        token_name = request.GET.get("token_name")
-        if not token_name:
-            return JsonResponse({"error": "Token name is required."}, status=400)
+def fetch_coin_list_view(request):
+    coins = fetch_coin_list()
+    if isinstance(coins, dict) and "error" in coins:
+        error = coins["error"]
+        coins = []
+    else:
+        error = None
 
-        # Example: Fetch analysis data for the token
-        analysis_data = {
-            "liquidity": analyze_liquidity("static/historical_data.json"),  # Replace with token-specific logic
-            "volatility": analyze_volatility("static/historical_data.json"),  # Replace with token-specific logic
-            "price_prediction": get_crypto_predictions(token_name),  # Replace with actual logic
-        }
+    return render(request, "coin_list.html", {"coins": coins, "error": error})
 
-        return JsonResponse(analysis_data)
-    return JsonResponse({"error": "Invalid request method."}, status=405)
+@login_required
+def crypto_details_view(request, crypto_id):
+    try:
+        predictions = get_crypto_predictions(crypto_id)
+        if "error" in predictions:
+            return render(request, "crypto_details.html", {"error": predictions["error"]})
+
+        metrics = get_crypto_metrics(crypto_id)
+        return render(request, "crypto_details.html", {
+            "crypto_id": crypto_id,
+            "predictions": predictions,
+            "metrics": metrics,
+        })
+    except Exception as e:
+        print(f"Error in crypto_details_view: {e}")
+        return render(request, "crypto_details.html", {"error": "Unable to load data."})
 
 
 def risk_management_view(request):

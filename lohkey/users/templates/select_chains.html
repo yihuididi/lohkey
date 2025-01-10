@@ -13,58 +13,82 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
         }
 
         .container {
-            background: white;
-            padding: 30px;
+            max-width: 900px;
+            width: 100%;
+            margin: 20px;
+            padding: 20px;
+            background: #fff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 100%;
-            max-width: 600px;
         }
 
         h2 {
-            margin-bottom: 20px;
+            text-align: center;
             color: #333;
+            margin-bottom: 20px;
         }
 
-        .checkbox-group {
+        .card-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 15px;
             justify-content: center;
-            margin-bottom: 20px;
         }
 
-        .checkbox-item {
-            background-color: #f9f9f9;
+        .card {
+            flex: 1 1 calc(33.333% - 20px);
+            max-width: calc(33.333% - 20px);
+            padding: 15px;
             border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 10px 15px;
-            cursor: pointer;
-            transition: background-color 0.3s, border-color 0.3s;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            text-align: center;
+            transition: transform 0.3s, background-color 0.3s;
         }
 
-        .checkbox-item:hover {
+        .card:hover {
+            transform: translateY(-5px);
             background-color: #e9f3fe;
             border-color: #4285F4;
         }
 
-        input[type="checkbox"] {
-            margin-right: 10px;
+        .card input[type="checkbox"] {
+            display: none;
+        }
+
+        .card label {
+            display: block;
+            font-size: 16px;
+            font-weight: bold;
+            color: #555;
+            cursor: pointer;
+        }
+
+        .card.checked {
+            background-color: #4285F4;
+            color: #fff;
+            border-color: #357ae8;
+        }
+
+        .card.checked label {
+            color: #fff;
         }
 
         button {
-            padding: 10px;
+            margin-top: 20px;
+            padding: 10px 20px;
             background-color: #4285F4;
             color: white;
             border: none;
             border-radius: 4px;
             font-size: 16px;
             cursor: pointer;
+            display: block;
+            width: 100%;
         }
 
         button:hover {
@@ -75,6 +99,7 @@
             color: red;
             font-size: 14px;
             margin-top: 10px;
+            text-align: center;
         }
     </style>
 </head>
@@ -83,12 +108,12 @@
         <h2>Select Blockchains</h2>
         <form method="POST">
             {% csrf_token %}
-            <div class="checkbox-group">
+            <div class="card-container">
                 {% for chain, chain_id in chains.items %}
-                <label class="checkbox-item">
-                    <input type="checkbox" name="chains" value="{{ chain }}">
-                    {{ chain }}
-                </label>
+                <div class="card">
+                    <input type="checkbox" id="chain-{{ forloop.counter }}" name="chains" value="{{ chain }}">
+                    <label for="chain-{{ forloop.counter }}">{{ chain }}</label>
+                </div>
                 {% endfor %}
             </div>
             <button type="submit">Fetch Portfolio</button>
@@ -97,5 +122,14 @@
         <p class="error">{{ error }}</p>
         {% endif %}
     </div>
+    <script>
+        document.querySelectorAll('.card').forEach(card => {
+            const checkbox = card.querySelector('input[type="checkbox"]');
+            card.addEventListener('click', () => {
+                checkbox.checked = !checkbox.checked;
+                card.classList.toggle('checked', checkbox.checked);
+            });
+        });
+    </script>
 </body>
 </html>

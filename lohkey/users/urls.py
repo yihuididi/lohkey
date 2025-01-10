@@ -4,7 +4,8 @@ from . import views
 
 urlpatterns = [
     # Home Page
-    path("", views.home, name="home"),
+    path('', views.landing_page, name='landing_page'),  # Landing page as the default
+    path("home/", views.home, name="home"),
     
     # User Authentication
     path('accounts/login/', lambda request: redirect('socialaccount_login', provider='google'), name="login"),
@@ -14,7 +15,10 @@ urlpatterns = [
     path("wallet-address/", views.wallet_address_view, name="wallet_address"),
     path("select-chains/", views.select_chains_view, name="select_chains"),
     path("portfolio/", views.portfolio_view, name="portfolio"),
-    path("fetch-token-analysis/", views.fetch_token_analysis, name="fetch_token_analysis"),
+
+    # Top 50 Cryptocurrencies Views
+    path("coins/", views.fetch_coin_list_view, name="coin_list"),
+    path("crypto/<str:crypto_id>/", views.crypto_details_view, name="crypto_details"),
     
     # Risk Management and Advice
     path("risk-management/", views.risk_management_view, name="risk_management"),

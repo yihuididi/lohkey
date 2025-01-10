@@ -6,6 +6,8 @@ import numpy as np
 from datetime import datetime, timezone
 from sklearn.linear_model import LinearRegression
 from statsmodels.tsa.api import SimpleExpSmoothing
+import yfinance as yf
+from datetime import timedelta
 
 # Constants for API
 GOLDRUSH_API_KEY = "cqt_rQgtjvHXk8jbYRWfJTcQycmBTqh3"
@@ -33,6 +35,77 @@ SUPPORTED_CHAINS = {
     "Cardano Mainnet": "cardano-mainnet"
 }
 
+crypto_to_yahoo_symbol = {
+    "bitcoin": "BTC-USD",
+    "ethereum": "ETH-USD",
+    "tether": "USDT-USD",
+    "ripple": "XRP-USD",
+    "binancecoin": "BNB-USD",
+    "solana": "SOL-USD",
+    "dogecoin": "DOGE-USD",
+    "usd-coin": "USDC-USD",
+    "cardano": "ADA-USD",
+    "staked-ether": "STETH-USD",
+    "tron": "TRX-USD",
+    "avalanche-2": "AVAX-USD",
+    "sui": "SUI-USD",
+    "wrapped-steth": "WSTETH-USD",
+    "the-open-network": "TON-USD",
+    "chainlink": "LINK-USD",
+    "shiba-inu": "SHIB-USD",
+    "wrapped-bitcoin": "WBTC-USD",
+    "stellar": "XLM-USD",
+    "hedera-hashgraph": "HBAR-USD",
+    "polkadot": "DOT-USD",
+    "weth": "WETH-USD",
+    "bitcoin-cash": "BCH-USD",
+    "leo-token": "LEO-USD",
+    "uniswap": "UNI-USD",
+    "litecoin": "LTC-USD",
+    "bitget-token": "BGB-USD",
+    "pepe": "PEPE-USD",
+    "hyperliquid": "HYPE-USD",
+    "wrapped-eeth": "WEETH-USD",
+    "near": "NEAR-USD",
+    "usds": "USDS-USD",
+    "ethena-usde": "USDE-USD",
+    "internet-computer": "ICP-USD",
+    "aptos": "APT-USD",
+    "aave": "AAVE-USD",
+    "mantle": "MNT-USD",
+    "render-token": "RNDR-USD",
+    "mantra-dao": "OM-USD",
+    "polygon-ecosystem-token": "POL-USD",
+    "crypto-com-chain": "CRO-USD",
+    "ethereum-classic": "ETC-USD",
+    "vechain": "VET-USD",
+    "bittensor": "TAO-USD",
+    "monero": "XMR-USD",
+    "fetch-ai": "FET-USD"
+}
+
+
+def fetch_wallet_balances_with_prices(wallet_address, chain_id):
+    """
+    Fetch wallet balances and include pricing data using the balances_v2 endpoint.
+    Args:
+        wallet_address (str): The wallet address.
+        chain_id (str): Blockchain chain ID (e.g., "eth-mainnet").
+    Returns:
+        list: List of token balances with pricing data.
+    """
+    url = f"{BASE_URL}/{chain_id}/address/{wallet_address}/balances_v2/"
+    params = {"key": GOLDRUSH_API_KEY}
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        data = response.json()
+        return data.get("data", {}).get("items", [])
+    except requests.RequestException as e:
+        print(f"Error fetching balances with prices: {e}")
+        return []
+
+
 # Fetch Wallet Data
 def fetch_wallet_balances(wallet_address, chain_id):
     url = f"{BASE_URL}/{chain_id}/address/{wallet_address}/balances_v2/"
@@ -56,15 +129,17 @@ def fetch_transaction_history(wallet_address, chain_id):
 
 def multi_chain_query(wallet_address, selected_chains):
     """
-    Fetch wallet data across selected blockchains.
+    Fetch wallet data across selected blockchains, including current token prices.
     """
     portfolio = {"balances": {}, "transactions": {}}
 
     for chain_name in selected_chains:
         chain_id = SUPPORTED_CHAINS[chain_name]
 
-        # Fetch balances
-        balances = fetch_wallet_balances(wallet_address, chain_id)
+        # Fetch balances with pricing data
+        balances = fetch_wallet_balances_with_prices(wallet_address, chain_id)
+
+        # Add balances to portfolio
         portfolio["balances"][chain_name] = balances
 
         # Fetch transactions
@@ -72,6 +147,7 @@ def multi_chain_query(wallet_address, selected_chains):
         portfolio["transactions"][chain_name] = transactions
 
     return portfolio
+
 
 
 # Fetch Coin List
@@ -133,19 +209,113 @@ def analyze_volatility(json_file):
 
 # Price Predictions
 def get_crypto_predictions(crypto_symbol):
-    data = yf.download(crypto_symbol, period="1y", interval="1d")
-    if data.empty:
-        return {"error": "No data available for this cryptocurrency."}
-    data.reset_index(inplace=True)
-    x = np.arange(len(data))[:, np.newaxis]
-    y = data['Close'].values
-    model = LinearRegression().fit(x, y)
-    forecast_x = np.arange(len(data), len(data) + 14)[:, np.newaxis]
-    forecast_y = model.predict(forecast_x)
-    return {
-        "historical_prices": y.tolist(),
-        "predicted_prices": forecast_y.tolist(),
-    }
+    try:
+        yf_symbol = crypto_to_yahoo_symbol.get(crypto_symbol.lower())
+        if not yf_symbol:
+            return {"error": f"No Yahoo Finance symbol available for {crypto_symbol}"}
+
+        # Fetch historical data
+        data = yf.download(yf_symbol, period="1y", interval="1d")
+        if data.empty:
+            return {"error": "No data available for this cryptocurrency."}
+
+        # Reset index and check for missing dates
+        data.reset_index(inplace=True)
+
+        # Prepare data for prediction
+        x = np.arange(len(data))[:, np.newaxis]
+        y = data['Close'].values
+
+        # Linear regression for price prediction
+        model = LinearRegression().fit(x, y)
+        forecast_x = np.arange(len(data), len(data) + 14)[:, np.newaxis]
+        forecast_y = model.predict(forecast_x)
+
+        # Generate forecast dates
+        last_date = pd.to_datetime(data["Date"].iloc[-1])
+        forecast_dates = [
+            (last_date + pd.Timedelta(days=i + 1)).strftime("%Y-%m-%d") for i in range(14)
+        ]
+
+        # return last 30 rows (most recent 30 days)
+        recent_data = data.tail(30)
+        historical_prices = [{"price": row["Close"]} for _, row in recent_data.iterrows()]
+
+
+        # Return historical and predicted prices
+        return {
+            "historical_prices": historical_prices,
+            "predicted_prices": [{"date": d, "price": p} for d, p in zip(forecast_dates, forecast_y)],
+        }
+    except Exception as e:
+        print(f"Error fetching predictions: {e}")
+        return {"error": str(e)}
+
+    
+def get_crypto_metrics(crypto_symbol):
+    """
+    Fetches historical price data for a cryptocurrency and calculates key investment metrics.
+
+    Args:
+        crypto_symbol (str): The symbol of the cryptocurrency (e.g., 'BTC-USD').
+
+    Returns:
+        dict: A dictionary with key metrics like volatility, moving averages, RSI, and more.
+    """
+    yf_symbol = crypto_to_yahoo_symbol.get(crypto_symbol.lower())
+    if not yf_symbol:
+        return {"error": f"No Yahoo Finance symbol available for {crypto_id}"}
+    try:
+        # Fetch historical data for the crypto
+        crypto_data = yf.download(yf_symbol, period="6mo", interval="1d")
+        if crypto_data.empty:
+            return {"error": f"No data found for {yf_symbol}."}
+
+        # Calculate current price
+        current_price = crypto_data['Close'].iloc[-1]
+
+        # Calculate daily returns
+        crypto_data['Daily Returns'] = crypto_data['Close'].pct_change()
+
+        # Calculate annualized volatility
+        volatility = crypto_data['Daily Returns'].std() * np.sqrt(252)
+
+        # Calculate moving averages
+        crypto_data['7-Day MA'] = crypto_data['Close'].rolling(window=7).mean()
+        crypto_data['30-Day MA'] = crypto_data['Close'].rolling(window=30).mean()
+
+        # Calculate Relative Strength Index (RSI)
+        delta = crypto_data['Close'].diff()
+        gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+        loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+        rs = gain / loss
+        crypto_data['RSI'] = 100 - (100 / (1 + rs))
+        rsi = crypto_data['RSI'].iloc[-1]
+
+        # Calculate All-Time High (ATH) and drawdown
+        ath = crypto_data['Close'].max()
+        drawdown = ((ath - current_price) / ath) * 100
+
+        # Calculate trading volume
+        average_volume = crypto_data['Volume'].mean()
+
+        # Return metrics
+        return {
+            "current_price": current_price,
+            "volatility": volatility,
+            "7_day_moving_average": crypto_data['7-Day MA'].iloc[-1],
+            "30_day_moving_average": crypto_data['30-Day MA'].iloc[-1],
+            "rsi": rsi,
+            "all_time_high": ath,
+            "drawdown": drawdown,
+            "average_volume": average_volume,
+            "message": f"Calculated key metrics for {crypto_symbol}.",
+        }
+    except Exception as e:
+        return {"error": f"An error occurred: {e}"}
+
+
+
 
 # Save data dynamically during app execution
 if __name__ == "__main__":

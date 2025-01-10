@@ -7,36 +7,14 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
-        }
-
-        .navbar {
-            background-color: #4285F4;
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            margin: 0 10px;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .navbar a:hover {
-            text-decoration: underline;
         }
 
         .container {
-            max-width: 1100px;
-            margin: 30px auto;
+            max-width: 900px;
+            margin: 50px auto;
             background: white;
             padding: 20px;
             border-radius: 8px;
@@ -46,169 +24,125 @@
         h2 {
             text-align: center;
             margin-bottom: 20px;
-            color: #333;
-        }
-
-        .token {
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: #f9f9f9;
-        }
-
-        .token-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .token-header h3 {
-            margin: 0;
-            font-size: 18px;
-            color: #4285F4;
-        }
-
-        .toggle-icon {
-            font-size: 18px;
-            color: #4285F4;
-        }
-
-        .analysis-details {
-            display: none;
-            margin-top: 10px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            margin-top: 20px;
+            table-layout: fixed; /* Ensures equal column widths */
         }
 
         table th, table td {
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #ddd;
             text-align: left;
+            word-wrap: break-word; /* Wraps long text */
+            white-space: normal;   /* Ensures text does not overflow */
         }
 
         table th {
             background-color: #4285F4;
             color: white;
+            text-transform: uppercase;
         }
 
-        .error {
-            color: red;
+        table td img {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            margin-right: 5px;
+            border-radius: 50%;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #777;
             font-style: italic;
+            margin-top: 20px;
+        }
+
+        .navbar {
+            background-color: #4285F4;
+            padding: 10px 20px;
+            color: white;
+            display: flex;
+            justify-content: flex-end; /* Aligns links to the right */
+        }
+
+        .navbar .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            margin-left: 15px;
+        }
+
+        .navbar .nav-links a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
+    <!-- Navigation Bar -->
     <div class="navbar">
-        <div>
-            <span>Welcome, {{ user.first_name }}</span>
-        </div>
-        <div>
+        <div class="nav-links">
+            <a href="{% url 'coin_list' %}">Top Cryptocurrencies</a>
             <a href="{% url 'wallet_address' %}">Change Wallet Address</a>
-            <a href="{% url 'select_chains' %}">Change Blockchain Selection</a>
+            <a href="{% url 'select_chains' %}">Change Blockchains</a>
             <a href="{% url 'logout' %}">Logout</a>
         </div>
     </div>
 
-    <!-- Main Content -->
+    <!-- Portfolio Container -->
     <div class="container">
         <h2>Wallet Portfolio Overview</h2>
-        <p>Wallet Address: {{ wallet_address }}</p>
 
-        <!-- Portfolio Tokens -->
-        {% for chain, balances in portfolio.balances.items %}
-            {% for asset in balances %}
-            <div class="token">
-                <div class="token-header" onclick="fetchAnalysisData('{{ asset.contract_name }}')">
-                    <h3>{{ asset.contract_name }} ({{ asset.contract_ticker_symbol }})</h3>
-                    <span class="toggle-icon" id="icon-{{ asset.contract_name }}">+</span>
-                </div>
-                <div class="analysis-details" id="details-{{ asset.contract_name }}">
-                    <p>Loading analysis data...</p>
-                </div>
-            </div>
-            {% endfor %}
-        {% endfor %}
+        {% if portfolio.balances %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Token</th>
+                    <th>Symbol</th>
+                    <th>Wallet Balance</th>
+                    <th>Current Price (USD)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for chain, balances in portfolio.balances.items %}
+                    {% for asset in balances %}
+                    <tr>
+                        <!-- Token Name with Logo -->
+                        <td>
+                            {% if asset.logo_url %}
+                                <img src="{{ asset.logo_url }}" alt="Logo">
+                            {% endif %}
+                            {{ asset.contract_name }}
+                        </td>
+
+                        <!-- Token Symbol -->
+                        <td>{{ asset.contract_ticker_symbol }}</td>
+
+                        <!-- Wallet Balance -->
+                        <td title="{{ asset.balance|floatformat:6 }}">{{ asset.balance|floatformat:2 }}</td>
+
+                        <!-- Current Price -->
+                        <td>
+                            {% if asset.quote_rate %}
+                                ${{ asset.quote_rate|floatformat:2 }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty-message">No portfolio data available. Please provide a valid wallet address and select chains.</p>
+        {% endif %}
     </div>
-
-    <script>
-        function fetchAnalysisData(tokenName) {
-            const details = document.getElementById(`details-${tokenName}`);
-            const icon = document.getElementById(`icon-${tokenName}`);
-
-            // Check if data is already loaded
-            if (details.dataset.loaded === "true") {
-                details.style.display = details.style.display === "none" ? "block" : "none";
-                icon.textContent = details.style.display === "block" ? "-" : "+";
-                return;
-            }
-
-            // Show loading message
-            details.innerHTML = "<p>Loading analysis data...</p>";
-            details.style.display = "block";
-            icon.textContent = "-";
-
-            // Fetch analysis data via AJAX
-            fetch(`/fetch-token-analysis/?token_name=${tokenName}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        details.innerHTML = `<p class="error">${data.error}</p>`;
-                        return;
-                    }
-
-                    // Populate analysis data
-                    details.innerHTML = `
-                        <h4>Analysis</h4>
-
-                        <!-- Liquidity -->
-                        <h5>Liquidity Risk</h5>
-                        <table>
-                            <thead>
-                                <tr><th>Metric</th><th>Value</th></tr>
-                            </thead>
-                            <tbody>
-                                ${Object.entries(data.liquidity).map(([key, value]) => `<tr><td>${key}</td><td>${value}</td></tr>`).join("")}
-                            </tbody>
-                        </table>
-
-                        <!-- Volatility -->
-                        <h5>Volatility Risk</h5>
-                        <table>
-                            <thead>
-                                <tr><th>Metric</th><th>Value</th></tr>
-                            </thead>
-                            <tbody>
-                                ${Object.entries(data.volatility).map(([key, value]) => `<tr><td>${key}</td><td>${value}</td></tr>`).join("")}
-                            </tbody>
-                        </table>
-
-                        <!-- Price Prediction -->
-                        <h5>Price Predictions</h5>
-                        <table>
-                            <thead>
-                                <tr><th>Type</th><th>Price</th></tr>
-                            </thead>
-                            <tbody>
-                                ${data.price_prediction.historical_prices.map(price => `<tr><td>Historical</td><td>${price}</td></tr>`).join("")}
-                                ${data.price_prediction.predicted_prices.map(price => `<tr><td>Predicted</td><td>${price}</td></tr>`).join("")}
-                            </tbody>
-                        </table>
-                    `;
-
-                    // Mark as loaded
-                    details.dataset.loaded = "true";
-                })
-                .catch(error => {
-                    details.innerHTML = `<p class="error">Error loading data: ${error}</p>`;
-                });
-        }
-    </script>
 </body>
 </html>
+

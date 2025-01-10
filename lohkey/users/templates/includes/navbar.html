@@ -14,8 +14,7 @@
     <!-- Navigation Links -->
     <div class="nav-links">
         <a href="/portfolio" class="{% if request.path == '/portfolio' %}active{% endif %}">Portfolio</a>
-        <a href="/risk-management" class="{% if request.path == '/risk-management' %}active{% endif %}">Risk Management</a>
-        <a href="/risk-advice" class="{% if request.path == '/risk-advice' %}active{% endif %}">Risk Advice</a>
+        <a href="/coins" class="{% if request.path == '/coins' %}active{% endif %}">Top Cryptocurrencies</a>
     </div>
 
     <!-- User Profile and Dropdown -->
@@ -30,6 +29,7 @@
     <a href="{% provider_login_url 'google' %}" class="login-btn">Login</a>
     {% endif %}
 </div>
+
 
 <script>
     function toggleDropdown() {

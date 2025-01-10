@@ -4,7 +4,7 @@ import firebase_admin
 
 # Dynamically determine the absolute path to the credentials file
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-cred_path = os.path.join(BASE_DIR, "lohkey-91b0d-firebase-adminsdk-32057-d38d9d22b2.json")
+cred_path = os.path.join(BASE_DIR, "lohkey-91b0d-firebase-adminsdk-32057-841cd2240d.json")
 
 # Print the absolute path for debugging
 print("Using credentials file at:", cred_path)

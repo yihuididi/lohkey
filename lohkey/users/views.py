@@ -4,7 +4,8 @@ from django.contrib.auth.decorators import login_required
 from allauth.socialaccount.models import SocialAccount
 from firestore import db 
 from django.shortcuts import render, HttpResponse
-from .model import predict_market_risk, predict_credit_risk_logistic, predict_credit_risk_random_forest
+from users.wallet_utils import multi_chain_query, analyze_liquidity, fetch_historical_data, fetch_coin_list, analyze_volatility, get_crypto_predictions
+
 
 @login_required
 def home(request):
@@ -41,26 +42,33 @@ def portfolio_view(request):
         return render(request, "portfolio.html", {"error": "An error occurred while loading the portfolio page."})
 
 @login_required
-def submit_wallet_address(request):
+def wallet_address_view(request):
     if request.method == "POST":
-        # Retrieve wallet address from the form
         wallet_address = request.POST.get("wallet_address")
-        
-        # Save or update the wallet address in Firebase
+
+        # Validate wallet address
+        if not wallet_address or len(wallet_address) < 5:
+            return render(request, "wallet_address.html", {
+                "error": "Please provide a valid wallet address."
+            })
+
+        # Save wallet address in Firebase and session
         try:
-            if request.google_user_id:
-                doc_ref = db.collection("walletID").document(request.google_user_id)
+            google_user_id = getattr(request, "google_user_id", None)
+            if google_user_id:
+                doc_ref = db.collection("walletID").document(google_user_id)
                 doc_ref.set({"walletAddress": wallet_address})
-                print(f"Wallet Address updated: {wallet_address}")
-            else:
-                print("Google User ID is missing.")
+                request.session["wallet_address"] = wallet_address
         except Exception as e:
             print(f"Error updating wallet address: {e}")
-        
-        # Redirect to the portfolio page
-        return redirect("/portfolio")
+            return render(request, "wallet_address.html", {
+                "error": "An error occurred while saving your wallet address."
+            })
 
-    return render(request, "portfolio.html")
+        # Redirect to chain selection
+        return redirect("select_chains")
+
+    return render(request, "wallet_address.html")
 
 
 def risk_management_view(request):
@@ -96,3 +104,102 @@ def credit_risk_random_forest_view(request):
         result = predict_credit_risk_random_forest(loan_amount, income, credit_score, debt_to_income_ratio)
         return HttpResponse(f"Credit Risk (Random Forest): {result}")
     return render(request, 'credit_risk_random_forest.html')
+
+def select_chains_view(request):
+    SUPPORTED_CHAINS = {
+    "Ethereum Mainnet": "eth-mainnet",
+    "Binance Smart Chain": "bsc-mainnet",
+    "Polygon Mainnet": "polygon-mainnet",
+    "Avalanche Mainnet": "avalanche-mainnet",
+    "Fantom Opera": "fantom-mainnet",
+    "Arbitrum One": "arbitrum-mainnet",
+    "Optimism": "optimism-mainnet",
+    "Solana Mainnet": "solana-mainnet",
+    "Moonbeam Mainnet": "moonbeam-mainnet",
+    "Harmony Mainnet": "harmony-mainnet",
+    "Celo Mainnet": "celo-mainnet",
+    "Klaytn Mainnet": "klaytn-mainnet",
+    "Cronos Mainnet": "cronos-mainnet",
+    "Gnosis Chain": "gnosis-mainnet",
+    "Astar Mainnet": "astar-mainnet",
+    "Algorand Mainnet": "algorand-mainnet",
+    "Near Protocol": "near-mainnet",
+    "Tezos Mainnet": "tezos-mainnet",
+    "Tron Mainnet": "tron-mainnet",
+    "Cardano Mainnet": "cardano-mainnet"
+}
+    wallet_address = request.session.get("wallet_address")
+    if not wallet_address:
+        return redirect("wallet_address")
+
+    if request.method == "POST":
+        selected_chains = request.POST.getlist("chains")
+        if not selected_chains:
+            return render(request, "select_chains.html", {
+                "error": "Please select at least one blockchain.",
+                "chains": SUPPORTED_CHAINS,
+            })
+
+        # Save selected chains in session
+        request.session["selected_chains"] = selected_chains
+        return redirect("portfolio")
+
+    return render(request, "select_chains.html", {"chains": SUPPORTED_CHAINS})
+
+def portfolio_view(request):
+    wallet_address = request.session.get("wallet_address")
+    selected_chains = request.session.get("selected_chains")
+
+    if not wallet_address or not selected_chains:
+        return redirect("wallet_address")
+
+    # Fetch portfolio data
+    portfolio = multi_chain_query(wallet_address, selected_chains)
+    return render(request, "portfolio.html", {
+        "portfolio": portfolio,
+        "wallet_address": wallet_address,
+    })
+
+
+
+def coin_list_view(request):
+    """
+    Fetches and displays the list of top 50 cryptocurrencies.
+    """
+    coin_list = fetch_coin_list()
+    if "error" in coin_list:
+        return render(request, "coin_list.html", {"error": coin_list["error"]})
+    return render(request, "coin_list.html", {"coins": coin_list})
+
+
+def fetch_historical_view(request):
+    """
+    Fetches historical data for top cryptocurrencies.
+    """
+    fetch_historical_data()  # Save to static/historical_data.json
+    return render(request, "historical_data.html", {"message": "Historical data fetched successfully."})
+
+def liquidity_analysis_view(request):
+    """
+    Displays liquidity risk analysis for cryptocurrencies.
+    """
+    json_file = "static/historical_data.json"
+    liquidity_data = analyze_liquidity(json_file)
+    return render(request, "liquidity_analysis.html", {"liquidity_data": liquidity_data})
+
+def volatility_analysis_view(request):
+    """
+    Displays volatility risk analysis for cryptocurrencies.
+    """
+    json_file = "static/historical_data.json"
+    volatility_data = analyze_volatility(json_file)
+    return render(request, "volatility_analysis.html", {"volatility_data": volatility_data})
+
+def price_prediction_view(request, crypto_symbol):
+    """
+    Fetches and displays price predictions for a specific cryptocurrency.
+    """
+    predictions = get_crypto_predictions(crypto_symbol)
+    if "error" in predictions:
+        return render(request, "price_prediction.html", {"error": predictions["error"]})
+    return render(request, "price_prediction.html", {"predictions": predictions})

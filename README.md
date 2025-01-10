@@ -28,7 +28,14 @@ ________________________________________________________________________________
 
 ## Basic Commands ##
 
-**1. Running the Server**
+**1. Downloading Packages into the Environment**
+```bash
+source .venv/bin/activate  # Activate the virtual environment
+pip install package_name   # Install the package
+deactivate                 # Deactivate the virtual environment (optional)
+```
+
+**2. Running the Server**
 ```bash
 cd lohkey/lohkey
 python3 manage.py runserver
@@ -36,12 +43,7 @@ python3 manage.py runserver
 Open your browser and go to http://127.0.0.1:8000.
 
 
-**2. Downloading Packages into the Environment**
-```bash
-source .venv/bin/activate  # Activate the virtual environment
-pip install package_name   # Install the package
-deactivate                 # Deactivate the virtual environment (optional)
-```
+
 
 _____________________________________________________________________________________________
 

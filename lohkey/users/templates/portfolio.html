@@ -2,197 +2,118 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lohkey Log in</title>
+    <title>Wallet Portfolio</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            color: #333;
+            background-color: #f4f4f4;
             margin: 0;
             padding: 0;
         }
 
-        .navbar {
-            background-color: #4285F4;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: white;
-        }
-
-        .navbar .nav-links {
-            display: flex;
-            gap: 20px;
-        }
-
-        .navbar .nav-links a {
-            color: white;
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .navbar .nav-links a:hover {
-            text-decoration: underline;
-        }
-
-        .navbar .user-icon {
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-
-        .navbar .user-icon img {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            border: 2px solid white;
-        }
-
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            top: 40px;
-            right: 0;
-            background-color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            padding: 10px;
-            z-index: 1000;
-        }
-
-        .dropdown-menu a {
-            display: block;
-            text-decoration: none;
-            color: #333;
-            padding: 8px 12px;
-            font-size: 14px;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .dropdown-menu a:hover {
-            background-color: #f0f0f0;
-        }
-
         .container {
-            text-align: center;
+            max-width: 900px;
+            margin: 50px auto;
             background: white;
-            padding: 30px;
+            padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            margin: 100px auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         h2 {
+            text-align: center;
             margin-bottom: 20px;
-            font-size: 24px;
-            color: #555;
         }
 
-        .login-btn {
-            display: inline-block;
-            background-color: #4285F4;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
+        .section {
+            margin-bottom: 30px;
         }
 
-        .login-btn:hover {
-            background-color: #357ae8;
-        }
-
-        .user-info {
+        table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 20px;
         }
 
-        .logout-btn {
-            margin-top: 10px;
-            display: inline-block;
-            background-color: #e63946;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
+        table th, table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
         }
 
-        .logout-btn:hover {
-            background-color: #d62828;
+        table th {
+            background-color: #4285F4;
+            color: white;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #777;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    {% include 'includes/navbar.html' %}
-
-
-    <!-- Main Content -->
     <div class="container">
+        <h2>Wallet Portfolio</h2>
+        <div class="section">
+            <h3>Balances</h3>
+            {% if portfolio.balances %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Token</th>
+                        <th>Symbol</th>
+                        <th>Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for chain, balances in portfolio.balances.items %}
+                        {% for asset in balances %}
+                        <tr>
+                            <td>{{ asset.contract_name }}</td>
+                            <td>{{ asset.contract_ticker_symbol }}</td>
+                            <td>{{ asset.balance|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="empty-message">No balances available.</p>
+            {% endif %}
+        </div>
 
-        {% load socialaccount %}
-        
-        {% if not user.is_authenticated %}
-            <h2>Welcome to Project Lohkey</h2>
-            <a href="{% provider_login_url 'google' %}?next=/" class="login-btn">Login with Google</a>
-        {% else %}
-            <div class="user-info">
-                <h2>Welcome to the Portfolio page</h2>
-                <br>
-                {% if not wallet_address %}
-                    <p>Please indicate your wallet address to continue with further analysis of your portfolio</p>
-                {% else %}
-                    <p>Your wallet address is: <strong>{{ wallet_address }}</strong></p>
-                    <p>You can update your wallet address below:</p>
-                {% endif %}
-                
-                <!-- Wallet Address Input -->
-                <form action="{% url 'submit_wallet_address' %}" method="POST" style="margin-top: 20px;">
-                    {% csrf_token %}
-                    <label for="wallet-address" style="font-size: 16px; color: #555;">Wallet Address:</label>
-                    <br>
-                    <input type="text" id="wallet-address" name="wallet_address" 
-                           placeholder="Enter your wallet address"
-                           value="{{ wallet_address }}" 
-                           style="margin-top: 10px; padding: 10px; width: 80%; border: 1px solid #ccc; border-radius: 4px;">
-                    <br>
-                    <button type="submit" 
-                            style="margin-top: 20px; padding: 10px 20px; background-color: #4285F4; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">
-                        {% if wallet_address %} Update {% else %} Submit {% endif %}
-                    </button>
-                </form>
-            </div>
-        {% endif %}
+        <div class="section">
+            <h3>Transactions</h3>
+            {% if portfolio.transactions %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for chain, transactions in portfolio.transactions.items %}
+                        {% for txn in transactions %}
+                        <tr>
+                            <td>{{ txn.block_signed_at }}</td>
+                            <td>{{ txn.from_address }}</td>
+                            <td>{{ txn.to_address }}</td>
+                            <td>{{ txn.value|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="empty-message">No transactions available.</p>
+            {% endif %}
+        </div>
     </div>
-
-    <script>
-        function toggleDropdown() {
-            const dropdown = document.getElementById('dropdown-menu');
-            if (dropdown.style.display === 'block') {
-                dropdown.style.display = 'none';
-            } else {
-                dropdown.style.display = 'block';
-            }
-        }
-
-        // Close the dropdown when clicking outside
-        document.addEventListener('click', function(event) {
-            const dropdown = document.getElementById('dropdown-menu');
-            const userIcon = document.querySelector('.user-icon');
-            if (!userIcon.contains(event.target)) {
-                dropdown.style.display = 'none';
-            }
-        });
-    </script>
 </body>
 </html>

@@ -2,29 +2,29 @@ import json
 import requests
 import time
 
-# WARNING: running this script takes several minutes
-# Fetch historical prices of the top 50 coins
-if __name__ == "__main__":
-    with open("lohkey/static/coin_list.json", "r") as file:
+def fetch_historical_data():
+    """
+    Fetch historical price data for cryptocurrencies in `coin_list.json`.
+    Saves data to `historical_data.json`.
+    """
+    with open("static/coin_list.json", "r") as file:
         coin_list = json.load(file)
 
     headers = {"accept": "application/json"}
-    params = {
-        "vs_currency": "usd",
-        "days": 50, # Number of days worth of data
-        "interval": "daily",
-        "precision": "4"
-    }
-
     all_data = {}
-    for index, coin in enumerate(coin_list):
-        coin_id = coin["id"]
-        url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart"
-        response = requests.get(url, headers=headers, params=params)
-        all_data[coin_id] = response.json()
 
-        # Repect API rate limit
-        time.sleep(15)
+    for coin in coin_list:
+        url = f"https://api.coingecko.com/api/v3/coins/{coin['id']}/market_chart"
+        params = {"vs_currency": "usd", "days": 50, "interval": "daily"}
+        
+        try:
+            response = requests.get(url, headers=headers, params=params)
+            response.raise_for_status()
+            all_data[coin['id']] = response.json()
+        except requests.RequestException as e:
+            print(f"Error fetching data for {coin['id']}: {e}")
+        time.sleep(1)  # Avoid API rate limits
 
-    with open("lohkey/static/historical_data.json", "w") as file:
+    with open("static/historical_data.json", "w") as file:
         json.dump(all_data, file, indent=4)
+

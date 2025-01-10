@@ -28,19 +28,25 @@ ________________________________________________________________________________
 
 ## Basic Commands ##
 
-**1. Downloading Packages into the Environment**
+**1. Clone to your desired directory 'github.com/ChounRH/lohkey'**
+
+**2. Downloading Packages into the Environment**
 ```bash
 source .venv/bin/activate  # Activate the virtual environment
-pip install package_name   # Install the package
+pip install package_name   # Install all required packages (see requirements.txt)
 deactivate                 # Deactivate the virtual environment (optional)
 ```
 
-**2. Running the Server**
+**3. Running the Server**
 ```bash
 cd lohkey/lohkey
 python3 manage.py runserver
 ```
+If there are any missing dependencies / libraries, terminal should prompt that they are missing and you can install them from there
+
 Open your browser and go to http://127.0.0.1:8000.
+
+
 
 
 

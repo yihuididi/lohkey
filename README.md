@@ -39,7 +39,7 @@ deactivate                 # Deactivate the virtual environment (optional)
 
 **3. Running the Server**
 ```bash
-cd lohkey/lohkey
+cd your_directory/lohkey/lohkey
 python3 manage.py runserver
 ```
 If there are any missing dependencies / libraries, terminal should prompt that they are missing and you can install them from there
